@@ -1,4 +1,7 @@
-﻿namespace SteamPrefill.Handlers
+﻿using SteamKit2;
+using SteamPrefill.SteamKit;
+
+namespace SteamPrefill.Handlers
 {
     public sealed class DownloadHandler : IDisposable
     {
@@ -89,7 +92,6 @@
             var cdnServer = _cdnPool.TakeConnection();
             await Parallel.ForEachAsync(requestsToDownload, new ParallelOptions { MaxDegreeOfParallelism = downloadArgs.MaxConcurrentRequests }, async (request, _) =>
             {
-                var buffer = new byte[4096];
                 try
                 {
                     var url = ZString.Format("http://{0}/depot/{1}/chunk/{2}", _lancacheAddress, request.DepotId, request.ChunkId);
@@ -97,12 +99,34 @@
                     requestMessage.Headers.Host = cdnServer.Host;
 
                     var response = await _client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
-                    using Stream responseStream = await response.Content.ReadAsStreamAsync();
-                    response.EnsureSuccessStatusCode();
+                    var contentLength = response.Content.Headers.ContentLength;
 
-                    // Don't save the data anywhere, so we don't have to waste time writing it to disk.
-                    while (await responseStream.ReadAsync(buffer, 0, buffer.Length, _) != 0)
+                    //TODO the way they're doing this is killing performance
+                    var compressedData = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+                    //using var ms = new MemoryStream((int)contentLength.GetValueOrDefault());
+                    //await responseStream.CopyToAsync(ms, 81920).ConfigureAwait(false);
+                    //var compressedData = ms.ToArray();
+
+                    // Decrypt first
+                    byte[] processedData = SteamPrefill.SteamKit.CryptoHelper.SymmetricDecrypt(compressedData, request.DepotKey);
+
+                    if (processedData.Length > 1 && processedData[0] == 'V' && processedData[1] == 'Z')
                     {
+                        processedData = VZipUtil.Decompress(processedData);
+                    }
+                    else
+                    {
+                        processedData = ZipUtil.Decompress(processedData);
+                    }
+
+                    var computedHash = SteamKit.CryptoHelper.AdlerHash(processedData);
+                    var computedHashString = HexMate.Convert.ToHexString(computedHash, HexFormattingOptions.Lowercase);
+
+                    var expectedHash = request.ChecksumString;
+
+                    if (computedHashString != expectedHash)
+                    {
+                        _ansiConsole.LogMarkupLine(Red($"Request {url} is corrupted"));
                     }
                 }
                 catch

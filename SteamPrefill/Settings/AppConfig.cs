@@ -1,5 +1,6 @@
 namespace SteamPrefill.Settings
 {
+    //TODO move to root folder
     public static class AppConfig
     {
         static AppConfig()

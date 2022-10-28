@@ -361,7 +361,16 @@ namespace SteamPrefill.Handlers.Steam
         }
 
         #endregion
-        
+
+        public async Task<byte[]> RequestDepotKey(uint depotId, uint appid = 0)
+        {
+            var completed = false;
+
+            var response = await SteamAppsApi.GetDepotDecryptionKey(depotId, appid).ToTask();
+
+            return response.DepotKey;
+        }
+
         public void Dispose()
         {
             CdnClient.Dispose();
