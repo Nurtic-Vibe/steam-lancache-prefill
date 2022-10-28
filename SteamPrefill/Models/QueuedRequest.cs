@@ -28,6 +28,7 @@
         [ProtoMember(5)]
         public readonly string ChecksumString;
 
+        [ProtoMember(6)]
         public readonly byte[] DepotKey;
 
         public QueuedRequest(Manifest depotManifest, ChunkData chunk, byte[] depotKey)

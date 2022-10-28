@@ -1,7 +1,4 @@
-﻿using SteamKit2;
-using SteamPrefill.SteamKit;
-
-namespace SteamPrefill.Handlers
+﻿namespace SteamPrefill.Handlers
 {
     public sealed class DownloadHandler : IDisposable
     {
