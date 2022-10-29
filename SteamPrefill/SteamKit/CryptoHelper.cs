@@ -33,18 +33,6 @@ namespace SteamPrefill.SteamKit
         /// </summary>
         static byte[] SymmetricDecrypt(byte[] input, byte[] key, out byte[] iv)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            DebugLog.Assert(key.Length == 32, "CryptoHelper", "SymmetricDecrypt used with non 32 byte key!");
-
             using (var aes = Aes.Create())
             {
                 aes.BlockSize = 128;

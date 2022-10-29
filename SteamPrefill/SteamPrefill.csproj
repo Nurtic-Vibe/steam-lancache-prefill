@@ -52,6 +52,7 @@
     <PackageReference Include="ByteSize" Version="2.1.1" />
     <PackageReference Include="CliFx" Version="2.3.0" />
     <PackageReference Include="HexMate" Version="0.0.3" />
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.2.1" />
     <PackageReference Include="protobuf-net" Version="3.1.17" />
     <PackageReference Include="SteamKit2" Version="2.4.1" />
     <PackageReference Include="Terminal.Gui" Version="1.7.2" />

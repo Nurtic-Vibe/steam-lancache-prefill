@@ -74,7 +74,7 @@ namespace SteamPrefill.CliCommands.Benchmark
                 // Randomizing request order, to simulate a more "realistic" workload similar to Lan Party traffic.
                 // We also want to avoid sequential reads, as they might be getting cached by the server's ram
                 _allRequests = benchmarkWorkload.AllQueuedRequests;
-                _allRequests.Shuffle();
+                //_allRequests.Shuffle();
             });
 
             _downloadHandler = new DownloadHandler(_ansiConsole, _cdnPool);

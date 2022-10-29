@@ -1,4 +1,8 @@
-﻿namespace SteamPrefill.Handlers
+﻿using SteamPrefill.Extensions;
+using System.Buffers;
+using System.Text;
+
+namespace SteamPrefill.Handlers
 {
     public sealed class DownloadHandler : IDisposable
     {
@@ -87,8 +91,9 @@
             var failedRequests = new ConcurrentBag<QueuedRequest>();
 
             var cdnServer = _cdnPool.TakeConnection();
-            await Parallel.ForEachAsync(requestsToDownload, new ParallelOptions { MaxDegreeOfParallelism = downloadArgs.MaxConcurrentRequests }, async (request, _) =>
+            await Parallel.ForEachAsync(requestsToDownload, new ParallelOptions { MaxDegreeOfParallelism = 40 }, async (request, _) =>
             {
+                byte[] buffer = new byte[4096];
                 try
                 {
                     var url = ZString.Format("http://{0}/depot/{1}/chunk/{2}", _lancacheAddress, request.DepotId, request.ChunkId);
@@ -96,16 +101,19 @@
                     requestMessage.Headers.Host = cdnServer.Host;
 
                     var response = await _client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
-                    var contentLength = response.Content.Headers.ContentLength;
 
                     //TODO the way they're doing this is killing performance
-                    var compressedData = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                    //using var ms = new MemoryStream((int)contentLength.GetValueOrDefault());
-                    //await responseStream.CopyToAsync(ms, 81920).ConfigureAwait(false);
-                    //var compressedData = ms.ToArray();
+                    //var compressedData = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+
+                    await using Stream responseStream = await response.Content.ReadAsStreamAsync();
+                    var outputStream = MemoryStreamExtensions.MemoryStreamManager.GetStream();
+                    responseStream.CopyStream(outputStream, (int)request.CompressedLength);
 
                     // Decrypt first
-                    byte[] processedData = SteamPrefill.SteamKit.CryptoHelper.SymmetricDecrypt(compressedData, request.DepotKey);
+                    var array = outputStream.ToArray();
+                    byte[] processedData = SteamKit.CryptoHelper.SymmetricDecrypt(array, request.DepotKey);
+
+                    Debugger.Break();
 
                     if (processedData.Length > 1 && processedData[0] == 'V' && processedData[1] == 'Z')
                     {
@@ -125,6 +133,7 @@
                     {
                         _ansiConsole.LogMarkupLine(Red($"Request {url} is corrupted"));
                     }
+
                 }
                 catch
                 {
