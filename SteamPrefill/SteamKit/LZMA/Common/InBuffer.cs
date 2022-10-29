@@ -1,2 +1,0 @@
-// InBuffer.cs
-#nullable disable

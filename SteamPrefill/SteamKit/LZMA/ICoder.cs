@@ -1,7 +1,3 @@
-// ICoder.h
-
-using System;
-
 namespace SevenZip
 {
 	/// <summary>

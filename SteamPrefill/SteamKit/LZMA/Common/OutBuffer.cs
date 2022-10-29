@@ -1,2 +1,0 @@
-// OutBuffer.cs
-#nullable disable
