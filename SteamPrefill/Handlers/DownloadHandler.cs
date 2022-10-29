@@ -1,6 +1,4 @@
 ﻿using SteamPrefill.Extensions;
-using System.Buffers;
-using System.Text;
 
 namespace SteamPrefill.Handlers
 {

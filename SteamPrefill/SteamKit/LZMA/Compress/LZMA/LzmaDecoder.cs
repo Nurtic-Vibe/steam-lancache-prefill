@@ -1,13 +1,11 @@
 // LzmaDecoder.cs
 #nullable disable
 
-using System;
-
 namespace SevenZip.Compression.LZMA
 {
 	using RangeCoder;
 
-	class Decoder : ICoder, ISetDecoderProperties // ,System.IO.Stream
+	class Decoder : ISetDecoderProperties // ,System.IO.Stream
 	{
 		class LenDecoder
 		{
@@ -166,12 +164,7 @@ namespace SevenZip.Compression.LZMA
 			for (int i = 0; i < Base.kNumLenToPosStates; i++)
 				m_PosSlotDecoder[i] = new BitTreeDecoder(Base.kNumPosSlotBits);
 		}
-
-        public Decoder(bool allowIllegalStreamStart) : this()
-        {
-            m_AllowIllegalStreamStart = allowIllegalStreamStart;
-        }
-
+        
 		void SetDictionarySize(uint dictionarySize)
 		{
 			if (m_DictionarySize != dictionarySize)
@@ -203,7 +196,7 @@ namespace SevenZip.Compression.LZMA
 		}
 
 		bool _solid = false;
-		void Init(System.IO.Stream inStream, System.IO.Stream outStream)
+		void Init(Stream inStream, Stream outStream)
 		{
 			m_RangeDecoder.Init(inStream);
 			m_OutWindow.Init(outStream, _solid);
@@ -235,8 +228,7 @@ namespace SevenZip.Compression.LZMA
 			m_PosAlignDecoder.Init();
 		}
 
-		public void Code(System.IO.Stream inStream, System.IO.Stream outStream,
-			Int64 inSize, Int64 outSize, ICodeProgress progress)
+		public void Code(Stream inStream, Stream outStream, Int64 inSize, Int64 outSize)
 		{
 			Init(inStream, outStream);
 

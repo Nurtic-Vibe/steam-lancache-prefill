@@ -8,8 +8,7 @@
         private static int FooterLength = 10;
 
         private static char Version = 'a';
-
-
+        
         public static byte[] Decompress(byte[] buffer)
         {
             using (MemoryStream ms = new MemoryStream(buffer))
@@ -46,7 +45,7 @@
                 using (MemoryStream inputStream = new MemoryStream(compressedBuffer))
                 using (MemoryStream outStream = new MemoryStream((int)sizeDecompressed))
                 {
-                    decoder.Code(inputStream, outStream, compressedBuffer.Length, sizeDecompressed, null);
+                    decoder.Code(inputStream, outStream, compressedBuffer.Length, sizeDecompressed);
 
                     var outData = outStream.ToArray();
                     if (Crc32.Compute(outData) != outputCRC)
