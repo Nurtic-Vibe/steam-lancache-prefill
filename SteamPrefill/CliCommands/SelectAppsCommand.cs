@@ -29,7 +29,7 @@ namespace SteamPrefill.CliCommands
                 using var tui2 = new SelectAppsTui(tuiAppModels);
                 Key userKeyPress = tui2.Run();
 
-                // Will only allow for prefill if the user has saved changes.  Escape simply exists
+                // Will only allow for prefill if the user has saved changes.  Escape simply exits
                 if (userKeyPress != Key.Enter)
                 {
                     return;

@@ -1,7 +1,7 @@
 ﻿#Requires -RunAsAdministrator
 
 $targetInterfaceDesc = "Mellanox"
-$lancacheIp = "192.168.1.222"
+$lancacheIp = "192.168.1.223"
 
 
 $ErrorActionPreference = "Stop"

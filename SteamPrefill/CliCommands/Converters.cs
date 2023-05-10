@@ -1,5 +1,6 @@
 ﻿namespace SteamPrefill.CliCommands
 {
+    //TODO move to common
     public sealed class NullableBoolConverter : BindingConverter<bool?>
     {
         // Required in order to prevent CliFx from showing the unnecessary 'Default: "False"' text for boolean flags
@@ -45,6 +46,7 @@
         }
     }
 
+    //TODO move to common
     public sealed class TransferSpeedUnitConverter : BindingConverter<TransferSpeedUnit>
     {
         public override TransferSpeedUnit Convert(string rawValue)

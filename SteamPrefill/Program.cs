@@ -2,6 +2,7 @@ namespace SteamPrefill
 {
     public static class Program
     {
+        //TODO - Loading app metadata when specifying --all used to be faster.  I think it used to skip over downloading DLC depots.  Something must have changed, look into it.
         public static async Task<int> Main()
         {
             try

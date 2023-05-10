@@ -126,10 +126,10 @@
             var appTokens = accessTokensResponse.AppTokens;
 
             // Build out the requests
-            var requests = new List<SteamApps.PICSRequest>();
+            var requests = new List<PICSRequest>();
             foreach (var appId in appIdsToLoad)
             {
-                var request = new SteamApps.PICSRequest(appId);
+                var request = new PICSRequest(appId);
                 if (appTokens.ContainsKey(appId))
                 {
                     request.AccessToken = appTokens[appId];
@@ -138,7 +138,7 @@
             }
 
             // Finally request the metadata from steam
-            var resultSet = await _steam3Session.SteamAppsApi.PICSGetProductInfo(requests, new List<SteamApps.PICSRequest>()).ToTask();
+            var resultSet = await _steam3Session.SteamAppsApi.PICSGetProductInfo(requests, new List<PICSRequest>()).ToTask();
 
             List<PicsProductInfo> appInfos = resultSet.Results.SelectMany(e => e.Apps).Select(e => e.Value).ToList();
             foreach (var app in appInfos)
