@@ -46,6 +46,11 @@ namespace SteamPrefill
                 }
                 AnsiConsole.Console.LogException(e);
             }
+            //TODO will probably need to implement this so that clifx properly displays the help text
+            catch (CommandException e)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 AnsiConsole.Console.LogException(e);
