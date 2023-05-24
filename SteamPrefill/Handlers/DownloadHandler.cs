@@ -97,10 +97,12 @@
                     // Don't save the data anywhere, so we don't have to waste time writing it to disk.
                     while (await responseStream.ReadAsync(buffer, 0, buffer.Length, _) != 0)
                     {
+                        throw new Exception("asd");
                     }
                 }
                 catch
                 {
+                    _ansiConsole.LogMarkupLine(Red("Failed request " + White($"/depot/{request.DepotId}/chunk/{request.ChunkId}")));
                     failedRequests.Add(request);
                 }
                 progressTask.Increment(request.CompressedLength);
